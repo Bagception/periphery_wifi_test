@@ -36,5 +36,13 @@
     </ListView>    
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/wificonstatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/switch1"
+        android:layout_alignRight="@+id/switch1"
+        android:layout_below="@+id/switch1"
+        android:text="Status" />
     
 </RelativeLayout>
