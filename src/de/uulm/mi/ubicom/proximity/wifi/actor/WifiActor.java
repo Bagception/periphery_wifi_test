@@ -1,4 +1,4 @@
-package de.uulm.mi.ubicom.proximity.wifi;
+package de.uulm.mi.ubicom.proximity.wifi.actor;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.util.Log;
 import de.uulm.mi.ubicom.proximity.lib.BroadcastActor;
+import de.uulm.mi.ubicom.proximity.wifi.reactor.WifiReactor;
 
 public class WifiActor extends BroadcastActor<WifiReactor>{
 

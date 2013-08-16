@@ -4,5 +4,6 @@
     <string name="app_name">proximity_periphery_wifi_test</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_redirector">Redirector</string>
 
 </resources>
