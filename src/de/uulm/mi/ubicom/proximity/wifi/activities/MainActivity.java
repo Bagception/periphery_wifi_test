@@ -2,6 +2,7 @@ package de.uulm.mi.ubicom.proximity.wifi.activities;
 
 import com.example.proximity_periphery_wifi_test.R;
 
+import de.uulm.mi.ubicom.proximity.action.UI;
 import de.uulm.mi.ubicom.proximity.wifi.WifiInitiation;
 import de.uulm.mi.ubicom.proximity.wifi.actor.WifiActor;
 import de.uulm.mi.ubicom.proximity.wifi.reactor.WifiReactor;
@@ -27,6 +28,7 @@ public class MainActivity extends Activity implements WifiReactor{
 		setContentView(R.layout.activity_main);
 		
 		wifiActor = new WifiActor(this);
+		WifiInitiation.enableWifi(this);
 	}
 
 	
@@ -65,6 +67,11 @@ public class MainActivity extends Activity implements WifiReactor{
 		wifiStatusSwitch.setClickable(false);
 	}
 
+	
+	public void openUrl(View v){
+		UI.openURL("http://192.168.1.2:8080", this);
+
+	}
 
 	@Override
 	public void enabled() {
@@ -102,6 +109,7 @@ public class MainActivity extends Activity implements WifiReactor{
 		Switch wifiStatusSwitch = (Switch) findViewById(R.id.switch1);
 		wifiStatusSwitch.setChecked(false);		
 		wifiStatusSwitch.setClickable(true);
+		
 	}
 
 
@@ -109,8 +117,11 @@ public class MainActivity extends Activity implements WifiReactor{
 	public void connected(String ssid) {
 		TextView wifiStatusView = (TextView) findViewById(R.id.wificonstatus);
 		wifiStatusView.setText("connected with " + ssid);
+		UI.openURL("http://192.168.1.2:8080", this);
+
 	}
 
+	
 
 	@Override
 	public void disconnected() {
