@@ -1,6 +1,6 @@
 package de.uulm.mi.ubicom.proximity.wifi.activities;
 
-import com.example.proximity_periphery_wifi_test.R;
+import de.uulm.mi.proximity_periphery_wifi_test.R;
 
 import de.uulm.mi.ubicom.proximity.action.UI;
 import de.uulm.mi.ubicom.proximity.wifi.WifiInitiation;
@@ -34,6 +34,7 @@ public class MainActivity extends Activity implements WifiReactor{
 	
 	@Override
 	protected void onResume() {
+		Log.d("state","onResume");
 		super.onResume();
 		wifiActor.register(this);
 		wifiActor.poll(this);
@@ -41,8 +42,34 @@ public class MainActivity extends Activity implements WifiReactor{
 	
 	@Override
 	protected void onPause() {
+		Log.d("state","onPause");
 		super.onPause();
 		wifiActor.unregister(this);
+	}
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		Log.d("state","onSaveInstaceState");
+		super.onSaveInstanceState(outState);
+	}
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		Log.d("state","onRestoreInstaceState");
+		super.onRestoreInstanceState(savedInstanceState);
+	}
+	@Override
+	protected void onDestroy() {
+		Log.d("state","onDestroy");
+		super.onDestroy();
+	}
+	@Override
+	protected void onStart() {
+		Log.d("state","onStart");
+		super.onStart();
+	}
+	@Override
+	protected void onStop() {
+		Log.d("state","onStop");
+		super.onStop();
 	}
 	
 	@Override
@@ -69,7 +96,7 @@ public class MainActivity extends Activity implements WifiReactor{
 
 	
 	public void openUrl(View v){
-		UI.openURL("http://192.168.1.2:8080", this);
+		//UI.openURL("http://192.168.1.2:8080", this);
 
 	}
 

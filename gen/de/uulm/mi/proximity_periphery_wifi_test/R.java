@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.example.proximity_periphery_wifi_test;
+package de.uulm.mi.proximity_periphery_wifi_test;
 
 public final class R {
     public static final class attr {
