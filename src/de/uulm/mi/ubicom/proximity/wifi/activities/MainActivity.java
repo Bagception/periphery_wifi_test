@@ -1,5 +1,8 @@
 package de.uulm.mi.ubicom.proximity.wifi.activities;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import de.uulm.mi.proximity_periphery_wifi_test.R;
 
 import de.uulm.mi.ubicom.proximity.action.UI;
@@ -7,21 +10,29 @@ import de.uulm.mi.ubicom.proximity.wifi.WifiInitiation;
 import de.uulm.mi.ubicom.proximity.wifi.actor.WifiActor;
 import de.uulm.mi.ubicom.proximity.wifi.reactor.WifiReactor;
 
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements WifiReactor{
 
+	private static final String WIFISSID = "defaultulm";
+	private boolean wifiOnStart;
 	private WifiActor wifiActor;
+	private boolean wifiLastEnabled;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -29,9 +40,30 @@ public class MainActivity extends Activity implements WifiReactor{
 		
 		wifiActor = new WifiActor(this);
 		WifiInitiation.enableWifi(this);
+		Switch wifiStatusSwitch = (Switch) findViewById(R.id.switch1);
+		WifiManager wifim = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+		wifiOnStart =  wifim.isWifiEnabled();
+		wifiStatusSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				Log.d("wifi","wifi");
+				Switch wifiStatusSwitch = (Switch) findViewById(R.id.switch1);
+				Log.d("wifi","switch is "+wifiStatusSwitch.isChecked());
+				if (wifiStatusSwitch.isChecked()){
+					//active
+					WifiInitiation.enableWifi(MainActivity.this);
+				}else{
+					//deac
+					WifiInitiation.disableWifi(MainActivity.this);
+					
+				}
+				wifiStatusSwitch.setChecked(!wifiStatusSwitch.isChecked());
+				wifiStatusSwitch.setClickable(false);
+				
+			}
+		});	
 	}
-
-	
 	@Override
 	protected void onResume() {
 		Log.d("state","onResume");
@@ -78,21 +110,7 @@ public class MainActivity extends Activity implements WifiReactor{
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
-	public void wifiSwitch(View v){
-		Switch wifiStatusSwitch = (Switch) findViewById(R.id.switch1);
-		Log.d("wifi","switch is "+wifiStatusSwitch.isChecked());
-		if (wifiStatusSwitch.isChecked()){
-			//active
-			WifiInitiation.enableWifi(this);
-		}else{
-			//deac
-			WifiInitiation.disableWifi(this);
-			
-		}
-		wifiStatusSwitch.setChecked(!wifiStatusSwitch.isChecked());
-		wifiStatusSwitch.setClickable(false);
-	}
+
 
 	
 	public void openUrl(View v){
@@ -102,14 +120,17 @@ public class MainActivity extends Activity implements WifiReactor{
 
 	@Override
 	public void enabled() {
-		Log.d("wifi","enabled, connecting...");
-		Switch wifiStatusSwitch = (Switch) findViewById(R.id.switch1);
-		wifiStatusSwitch.setChecked(true);
-		wifiStatusSwitch.setClickable(true);
-		if (!WifiInitiation.connectToWifi("defaultulm", this)){
-			promptPassword("defaultulm");
-		}
-		
+
+    	Log.d("wifi","enabled, connecting...");
+ 		Switch wifiStatusSwitch = (Switch) findViewById(R.id.switch1);
+ 		wifiStatusSwitch.setChecked(true);
+ 		wifiStatusSwitch.setClickable(true);
+ 		if (wifiLastEnabled) return;
+ 		if (!WifiInitiation.connectToWifi(WIFISSID, this)){
+ 			promptPassword(WIFISSID);
+ 		}
+ 
+		wifiLastEnabled = true;
 	}
 
 
@@ -136,6 +157,7 @@ public class MainActivity extends Activity implements WifiReactor{
 		Switch wifiStatusSwitch = (Switch) findViewById(R.id.switch1);
 		wifiStatusSwitch.setChecked(false);		
 		wifiStatusSwitch.setClickable(true);
+		wifiLastEnabled = false;
 		
 	}
 
@@ -144,7 +166,20 @@ public class MainActivity extends Activity implements WifiReactor{
 	public void connected(String ssid) {
 		TextView wifiStatusView = (TextView) findViewById(R.id.wificonstatus);
 		wifiStatusView.setText("connected with " + ssid);
-		UI.openURL("http://192.168.1.2:8080", this);
+		if (WIFISSID.equals(ssid)){
+			wifiStatusView.setTextColor(Color.GREEN);
+			UI.openURL("http://192.168.1.2:8080", this);	
+		}else{
+			wifiStatusView.setTextColor(Color.RED);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("Unable to connect ")
+			       .setTitle("WIFI");
+			AlertDialog dialog = builder.create();
+			if (!wifiOnStart){
+				WifiInitiation.disableWifi(this);
+			}
+		}
+		
 
 	}
 

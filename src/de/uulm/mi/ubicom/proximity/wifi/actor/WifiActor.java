@@ -13,6 +13,7 @@ import de.uulm.mi.ubicom.proximity.wifi.reactor.WifiReactor;
 
 public class WifiActor extends BroadcastActor<WifiReactor>{
 
+
 	public WifiActor(WifiReactor reactor) {
 		super(reactor);
 	}
@@ -112,7 +113,9 @@ public class WifiActor extends BroadcastActor<WifiReactor>{
 
 			if (info1.getType() == ConnectivityManager.TYPE_WIFI){
 				if (info1.isConnected()){
+					
 					reactor.connected(wifim.getConnectionInfo().getSSID());
+					
 				}else{
 					reactor.disconnected();
 				}	
